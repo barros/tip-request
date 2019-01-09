@@ -1,4 +1,4 @@
-# Tip Request
+# Tip Request for iOS
 
 #### _Coming soon to the App Store!_
 
