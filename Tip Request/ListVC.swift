@@ -21,19 +21,24 @@ class ListVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.delegate = self
         tableView.dataSource = self
-//        var temp = Payment(subtotal: 100.0, tip: 25.0, total: 125.0, location: "Pelon", date: Date(), timeZone: TimeZone.current.identifier)
-//        var temp2 = Payment(subtotal: 100.0, tip: 50.0, total: 150.0, location: "", date: Date(), timeZone: TimeZone.current.identifier)
-//        paymentArray.append(temp)
-//        paymentArray.append(temp2)
-        // paymentArray = (defaultsData.object(forKey: "paymentArray") ?? [Payment]()) as! [Payment]
+        
         loadDefaultData()
+        
         if paymentArray.count == 0 {
             editButton.isEnabled = false
         } else {
             editButton.isEnabled = true
         }
+        
+        // make nav bar fields white
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+    }
+    // make status bar fields white
+    override func viewWillAppear(_ animated: Bool) {
+        UIApplication.shared.statusBarStyle = .lightContent
     }
     
     func loadDefaultData() {
@@ -75,16 +80,10 @@ class ListVC: UIViewController {
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
             paymentArray[selectedIndexPath.row] = source.payment!
             tableView.reloadRows(at: [selectedIndexPath], with: .automatic)
-            print("test")
         } else {
             let newIndexPath = IndexPath(row: paymentArray.count, section: 0)
             paymentArray.append(source.payment!)
             print(paymentArray[0].total)
-            print("test2")
-//            print("subtotal: \(source.payment?.subtotal)")
-//            print("tip %: \(source.payment?.tip)")
-//            print("total: \(source.payment?.total)")
-//            print("location: \(source.payment?.location)")
             tableView.insertRows(at: [newIndexPath], with: .bottom)
             tableView.scrollToRow(at: newIndexPath, at: .bottom, animated: true)
         }
@@ -143,11 +142,13 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         paymentArray.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .fade)
+        saveDefaultData()
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let paymentToMove = paymentArray[sourceIndexPath.row]
         paymentArray.remove(at: sourceIndexPath.row)
         paymentArray.insert(paymentToMove, at: destinationIndexPath.row)
+        saveDefaultData()
     }
 }

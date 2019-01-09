@@ -26,21 +26,31 @@ class PaymentDetailVC: UIViewController {
     var newPayment = false
     var subtotal = 0.0
     var updated = false
-    var navBarDate = ""
+    var seguedPayment = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        initialView()
+    }
+    
+    // initial set up of detail view controller
+    func initialView() {
         if let payment = payment {
-            //enableSavedMode()
-            cancelButton.title = ""
-            cancelButton.isEnabled = false
-            subtotal = payment.subtotal
-            showDetails()
-            print("this is an EXISTING entry")
-            print("subtotal: \(payment.subtotal)")
-            print("tip %: \(payment.tip)")
-            print("total: \(payment.total)")
-            print("location: \(payment.location)")
+            if seguedPayment {
+                // enable edit mode then add 'if seguedPayment' statement to
+                // enableEditMode() method
+            } else {
+                //enableSavedMode()
+                cancelButton.title = ""
+                cancelButton.isEnabled = false
+                subtotal = payment.subtotal
+                showDetails()
+                print("this is an EXISTING entry")
+                print("subtotal: \(payment.subtotal)")
+                print("tip %: \(payment.tip)")
+                print("total: \(payment.total)")
+                print("location: \(payment.location)")
+            }
         } else {
             self.navigationItem.title = "New Payment"
             payment = Payment()
@@ -48,26 +58,29 @@ class PaymentDetailVC: UIViewController {
             enableEditMode()
             print("this is a NEW entry")
         }
+        
+        // make navigation bar text white
         self.navigationController?.navigationBar.tintColor = UIColor.white
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         
         // dismiss keyboard by tapping anywhere on view
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
+    }
+    // make status bar fields white
+    override func viewWillAppear(_ animated: Bool) {
+        UIApplication.shared.statusBarStyle = .lightContent
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated);
         if self.isMovingFromParentViewController {
+            // on click of back or swipe back
             self.performSegue(withIdentifier: "unwindFromPaymentDetailWithSegue", sender: self)
-            //On click of back or swipe back
         }
-//        if self.isBeingDismissed {
-//            //Dismissed
-//        }
     }
     
     // MARK: IBActions
     @IBAction func cancelPressed(_ sender: UIBarButtonItem) {
-        print("cancel button pressed")
         dismiss(animated: true, completion: nil)
     }
     
@@ -80,14 +93,12 @@ class PaymentDetailVC: UIViewController {
                 return
             }
             if newPayment {
-                //print("yer")
                 savePayment()
                 newPayment = false
                 self.performSegue(withIdentifier: "unwindFromPaymentDetailWithSegue", sender: self)
             } else {
                 savePayment()
-                self.navigationItem.title = String(format: "$%.02f", (payment?.total)!)
-                enableSavedMode()
+                showDetails()
             }
         }
     }
@@ -148,8 +159,8 @@ class PaymentDetailVC: UIViewController {
         } else {
             if let tempTip = tipTextField.text {
                 tipAmount = subtotal * (Double(tempTip)! / 100)
-                payment?.tip = Double(tempTip)!
                 updateTotalLabel(isPrice: true, total: subtotal+tipAmount)
+                payment?.tip = Double(tempTip)!
                 payment?.total = (subtotal+tipAmount)
             } else {
                 print("the tip percent entered is not valid")

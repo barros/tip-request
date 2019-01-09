@@ -20,12 +20,9 @@ class Payment: NSObject, NSCoding {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        let subtotal = aDecoder.decodeDouble(forKey: "subtotal")
-        self.subtotal = subtotal
-        let tip = aDecoder.decodeDouble(forKey: "tip")
-        self.tip = tip
-        let total = aDecoder.decodeDouble(forKey: "total")
-        self.total = total
+        self.subtotal = aDecoder.decodeDouble(forKey: "subtotal")
+        self.tip = aDecoder.decodeDouble(forKey: "tip")
+        self.total = aDecoder.decodeDouble(forKey: "total")
         if let location = aDecoder.decodeObject(forKey: "location") as? String {
             self.location = location
         }
