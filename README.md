@@ -8,5 +8,6 @@ _Tip Request_ was created as a way to allow users to track food purchases they h
 
 * Google sign-in
 * Google Firebase integration to track purchases across devices
+* Sync and use same database as Tip Request for Android
 
 [_Click here to view the Android version!_](https://github.com/barros/tip-request-android)
